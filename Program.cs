@@ -1,12 +1,19 @@
 ﻿using BTL.Models;
+using BTL.Services; // Thêm dòng này
 using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllersWithViews();
 
-// Thêm cấu hình DbContext ở đây
 builder.Services.AddDbContext<QLSKContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSingleton<IHttpContextAccessor, HttpContextAccessor>();
+builder.Services.AddScoped(sp => ShoppingCart.GetCart(sp));
+
+builder.Services.AddMemoryCache();
+builder.Services.AddSession();
 
 var app = builder.Build();
 
@@ -16,8 +23,9 @@ if (!app.Environment.IsDevelopment())
 }
 app.UseStaticFiles();
 
-app.UseRouting();
+app.UseSession();
 
+app.UseRouting();
 app.UseAuthorization();
 
 app.MapControllerRoute(

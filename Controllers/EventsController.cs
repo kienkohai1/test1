@@ -6,8 +6,8 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using Microsoft.EntityFrameworkCore;
 using BTL.Models;
-using Microsoft.AspNetCore.Hosting; // Đã thêm: Cần thiết để truy cập wwwroot
-using System.IO; // Đã thêm: Cần thiết để thao tác với file hệ thống
+using Microsoft.AspNetCore.Hosting;
+using System.IO;
 
 namespace BTL.Controllers
 {
@@ -32,17 +32,13 @@ namespace BTL.Controllers
         // GET: Events/Details/5
         public async Task<IActionResult> Details(int? id)
         {
-            if (id == null)
-            {
-                return NotFound();
-            }
+            if (id == null) return NotFound();
 
             var @event = await _context.Events
+                .Include(e => e.Tickets)
                 .FirstOrDefaultAsync(m => m.Id == id);
-            if (@event == null)
-            {
-                return NotFound();
-            }
+
+            if (@event == null) return NotFound();
 
             return View(@event);
         }
