@@ -1,14 +1,16 @@
 ﻿@model BTL.Models.Event
 
 @{
-    ViewData["Title"] = "Event Details";
+    ViewData["Title"] = "Chi tiết sự kiện";
+    // Lấy danh sách vé từ ViewData và ép kiểu
+    var tickets = ViewData["Tickets"] as IEnumerable<BTL.Models.Ticket>;
 }
 
 <div class="container mt-5">
-    <h1 class="display-4 text-center mb-4">Event Details</h1>
+    <h1 class="display-4 text-center mb-4">Chi tiết sự kiện</h1>
     <div class="card shadow-sm">
         <div class="card-body">
-            <h4 class="card-title">Event Information</h4>
+            <h4 class="card-title">Thông tin sự kiện</h4>
             <hr />
             <dl class="row">
                 <dt class="col-sm-3 fw-bold">@Html.DisplayNameFor(model => model.Name)</dt>
@@ -23,11 +25,11 @@
                 <dd class="col-sm-9">
                     @if (!string.IsNullOrEmpty(Model.ImagePath))
                     {
-                        <img src="@Model.ImagePath" alt="Event Image" class="img-fluid" style="max-width:250px; height:auto;" />
+                        <img src="@Url.Content(Model.ImagePath)" alt="Event Image" class="img-fluid" style="max-width:250px; height:auto;" />
                     }
                     else
                     {
-                        <span class="text-muted">No image available</span>
+                        <span class="text-muted">Không có hình ảnh</span>
                     }
                 </dd>
             </dl>
@@ -43,16 +45,17 @@
                     </tr>
                 </thead>
                 <tbody>
-                    @* Giả sử Model.Tickets đã được load từ Controller *@
-                    @if (Model.Tickets != null && Model.Tickets.Any())
+                    @* SỬA Ở ĐÂY: Dùng biến 'tickets' đã lấy từ ViewData *@
+                    @if (tickets != null && tickets.Any())
                     {
-                        @foreach (var ticket in Model.Tickets)
+                        @foreach (var ticket in tickets)
                         {
                             <tr>
                                 <td><strong>@ticket.Name</strong></td>
                                 <td>@ticket.Price.ToString("N0") VNĐ</td>
                                 <td class="text-end">
-                                    <a asp-controller="ShoppingCart" asp-action="AddToShoppingCart" asp-route-ticketId="@ticket.Id" class="btn btn-success">
+                                    @* SỬA Ở ĐÂY: Đổi asp-action thành "AddToCart" để khớp với Controller *@
+                                    <a asp-controller="ShoppingCart" asp-action="AddToCart" asp-route-ticketId="@ticket.Id" class="btn btn-success">
                                         <i class="fas fa-shopping-cart"></i> Thêm vào giỏ
                                     </a>
                                 </td>
@@ -68,8 +71,8 @@
                 </tbody>
             </table>
             <div class="d-flex justify-content-start gap-2 mt-4">
-                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Edit</a>
-                <a asp-action="Index" class="btn btn-outline-secondary">Back to List</a>
+                <a asp-action="Edit" asp-route-id="@Model?.Id" class="btn btn-primary">Chỉnh sửa</a>
+                <a asp-action="Index" class="btn btn-outline-secondary">Quay lại danh sách</a>
             </div>
         </div>
     </div>
